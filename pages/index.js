@@ -3,10 +3,35 @@ import config from "../config.json";
 import styled from "styled-components";
 import Menu from "../src/components/Menu";
 import { StyledTimeline } from "../src/components/TimeLine";
+import { createClient } from "@supabase/supabase-js";
+
+const PROJECT_URL = "https://udaxedsffpyvaobrsuzw.supabase.co";
+const PUBLIC_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkYXhlZHNmZnB5dmFvYnJzdXp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjgxNzM0NzAsImV4cCI6MTk4Mzc0OTQ3MH0.QMXpA2znDgozrTetO9EhddlOejMVflJ3S-8M0C9XIXM";
+const supabase = createClient(PROJECT_URL, PUBLIC_KEY);
 
 function HomePage() {
   const [valorDoFiltro, setValorDoFiltro] = React.useState("");
+  const [playlists, setPlaylists] = React.useState({});
 
+  React.useEffect(() => {
+    console.log("useEffect");
+    supabase
+      .from("video")
+      .select("*")
+      .then((res) => {
+        const novasPlaylists = {...playlists}
+        res.data.forEach((video) => {
+          if(!novasPlaylists[video.playlist]){
+            novasPlaylists[video.playlist] = [];
+          }
+          novasPlaylists[video.playlist].push(video);
+        });
+        setPlaylists(novasPlaylists)
+      });
+  }, []);
+
+  console.log("play",playlists)
   return (
     <>
       <div>
@@ -26,7 +51,7 @@ function HomePage() {
 export default HomePage;
 
 const StyledHeader = styled.div`
-  background-color: ${({theme}) => theme.backgroundLevel1};
+  background-color: ${({ theme }) => theme.backgroundLevel1};
 
   img {
     width: 80px;
@@ -42,15 +67,16 @@ const StyledHeader = styled.div`
   }
 `;
 const StyledBanned = styled.div`
-background-color:blue;
-background-image: url(${({bg})=>bg});
-height: 230px;
+  background-color: blue;
+  background-image: url(${({ bg }) => bg});
+  height: 230px;
 `;
 
 function Header() {
   return (
     <StyledHeader>
-      <StyledBanned bg={config.bg} />      <section className="user-info">
+      <StyledBanned bg={config.bg} />{" "}
+      <section className="user-info">
         <img src={`https://github.com/${config.github}.png`} />
         <div>
           <h2>{config.name}</h2>
