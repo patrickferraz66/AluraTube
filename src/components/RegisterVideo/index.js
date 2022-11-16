@@ -20,11 +20,11 @@ function useForm(props) {
   };
 }
 
+
 const PROJECT_URL = "https://udaxedsffpyvaobrsuzw.supabase.co";
 const PUBLIC_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkYXhlZHNmZnB5dmFvYnJzdXp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjgxNzM0NzAsImV4cCI6MTk4Mzc0OTQ3MH0.QMXpA2znDgozrTetO9EhddlOejMVflJ3S-8M0C9XIXM";
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVkYXhlZHNmZnB5dmFvYnJzdXp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjgxNzM0NzAsImV4cCI6MTk4Mzc0OTQ3MH0.QMXpA2znDgozrTetO9EhddlOejMVflJ3S-8M0C9XIXM";
 const supabase = createClient(PROJECT_URL, PUBLIC_KEY);
-console.log(supabase.from);
 
 function getThumbnail(url) {
   return `https://img.youtube.com/vi/${url.split("v=")[1]}/hqdefault.jpg`;
@@ -34,8 +34,8 @@ export default function RegisterVideo() {
   const [formVisivel, setFormVisivel] = React.useState(false);
   const formCadastro = useForm({
     initialValues: {
-      titulo: "mk: o armageddon das reviews",
-      url: "https://www.youtube.com/watch?v=j88QgLenaZw",
+      titulo: "",
+      url: "",
     },
   });
 
@@ -48,20 +48,18 @@ export default function RegisterVideo() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            supabase
-              .from("video")
-              .insert({
-                title: formCadastro.values.titulo,
-                url: formCadastro.values.url,
-                thumb: getThumbnail(formCadastro.values.url),
-                playlist: "jogos",
-              })
-              .then((res) => {
-                console.log(res);
-              })
-              .catch((err) => {
-                console.log(err);
-              });
+            supabase.from("video").insert({
+              title:formCadastro.values.titulo,
+              url:formCadastro.values.url,
+              thumb:getThumbnail(formCadastro.values.url),
+              playlist:"jogos",
+            })
+            .then((res)=>{
+              console.log(res);
+            })
+            .catch((err)=>{
+              console.log(err);
+            })
             setFormVisivel(false);
             formCadastro.clearForm();
           }}
